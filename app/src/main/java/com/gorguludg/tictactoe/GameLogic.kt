@@ -1,4 +1,4 @@
-package com.yourname.tictactoe
+package com.gorguludg.tictactoe
 
 class GameLogic {
     private val board = Array(3) { Array(3) { "" } }

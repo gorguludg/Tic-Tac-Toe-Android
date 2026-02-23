@@ -1,4 +1,4 @@
-package com.yourname.tictactoe
+package com.gorguludg.tictactoe
 
 import kotlin.random.Random
 

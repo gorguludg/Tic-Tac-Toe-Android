@@ -1,41 +1,36 @@
-package com.yourname.tictactoe
+package com.gorguludg.tictactoe
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity() {
 
-    private val buttons = Array(3) { Array<Button?>(3) { null } }
-    private lateinit var btnRestart: Button
+    private val cells = Array(3) { Array<TextView?>(3) { null } }
+    private lateinit var btnRestart: TextView
     private lateinit var textStatus: TextView
     private lateinit var textScoreX: TextView
     private lateinit var textScoreO: TextView
-    private lateinit var textGitHub: TextView
 
-    // Mode toggle buttons
-    private lateinit var btnPvP: Button
-    private lateinit var btnPvC: Button
+    // Mode toggle
+    private lateinit var btnPvP: TextView
+    private lateinit var btnPvC: TextView
 
-    // Symbol toggle buttons and container
+    // Symbol toggle
     private lateinit var symbolToggle: LinearLayout
-    private lateinit var btnChooseX: Button
-    private lateinit var btnChooseO: Button
+    private lateinit var btnChooseX: TextView
+    private lateinit var btnChooseO: TextView
 
     private lateinit var gameLogic: GameLogic
     private var computerAI: ComputerAI? = null
 
-    // Game mode settings
+    // Game settings
     private var vsComputer = false
     private var playerSymbol = "X"
     private var computerSymbol = "O"
@@ -46,25 +41,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize game logic
         gameLogic = GameLogic()
-
-        // Initialize UI components
         initializeUI()
-
-        // Update initial display
         updateTurnDisplay()
     }
 
     private fun initializeUI() {
-        // Find text views
+        // Text views
         textStatus = findViewById(R.id.textStatus)
         textScoreX = findViewById(R.id.textScoreX)
         textScoreO = findViewById(R.id.textScoreO)
-        textGitHub = findViewById(R.id.textGitHub)
         btnRestart = findViewById(R.id.btnRestart)
 
-        // Mode toggle buttons
+        // Mode toggle
         btnPvP = findViewById(R.id.btnPvP)
         btnPvC = findViewById(R.id.btnPvC)
 
@@ -73,27 +62,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btnChooseX = findViewById(R.id.btnChooseX)
         btnChooseO = findViewById(R.id.btnChooseO)
 
-        // Find and set up game board buttons
-        buttons[0][0] = findViewById(R.id.btn00)
-        buttons[0][1] = findViewById(R.id.btn01)
-        buttons[0][2] = findViewById(R.id.btn02)
-        buttons[1][0] = findViewById(R.id.btn10)
-        buttons[1][1] = findViewById(R.id.btn11)
-        buttons[1][2] = findViewById(R.id.btn12)
-        buttons[2][0] = findViewById(R.id.btn20)
-        buttons[2][1] = findViewById(R.id.btn21)
-        buttons[2][2] = findViewById(R.id.btn22)
+        // Game cells
+        cells[0][0] = findViewById(R.id.btn00)
+        cells[0][1] = findViewById(R.id.btn01)
+        cells[0][2] = findViewById(R.id.btn02)
+        cells[1][0] = findViewById(R.id.btn10)
+        cells[1][1] = findViewById(R.id.btn11)
+        cells[1][2] = findViewById(R.id.btn12)
+        cells[2][0] = findViewById(R.id.btn20)
+        cells[2][1] = findViewById(R.id.btn21)
+        cells[2][2] = findViewById(R.id.btn22)
 
-        // Set click listeners for all game buttons
+        // Cell click listeners
         for (i in 0..2) {
             for (j in 0..2) {
-                buttons[i][j]?.setOnClickListener(this)
+                val row = i
+                val col = j
+                cells[i][j]?.setOnClickListener {
+                    onCellClicked(row, col)
+                }
             }
         }
 
         // Mode toggle listeners
         btnPvP.setOnClickListener {
-            setActiveToggle(btnPvP, btnPvC)
+            setModeToggle(true)
             vsComputer = false
             symbolToggle.visibility = View.GONE
             resetScores()
@@ -101,7 +94,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         btnPvC.setOnClickListener {
-            setActiveToggle(btnPvC, btnPvP)
+            setModeToggle(false)
             vsComputer = true
             symbolToggle.visibility = View.VISIBLE
             computerAI = ComputerAI(computerSymbol, playerSymbol)
@@ -111,7 +104,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         // Symbol toggle listeners
         btnChooseX.setOnClickListener {
-            setActiveToggle(btnChooseX, btnChooseO)
+            setSymbolToggle(true)
             playerSymbol = "X"
             computerSymbol = "O"
             computerAI = ComputerAI(computerSymbol, playerSymbol)
@@ -120,7 +113,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         btnChooseO.setOnClickListener {
-            setActiveToggle(btnChooseO, btnChooseX)
+            setSymbolToggle(false)
             playerSymbol = "O"
             computerSymbol = "X"
             computerAI = ComputerAI(computerSymbol, playerSymbol)
@@ -128,67 +121,67 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             restartGame()
         }
 
-        // Restart button listener
+        // Restart button
         btnRestart.setOnClickListener {
             restartGame()
         }
+    }
 
-        // GitHub link listener
-        textGitHub.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/gorguludg/Tic-Tac-Toe-Android"))
-            startActivity(intent)
+    private fun setModeToggle(isPvP: Boolean) {
+        if (isPvP) {
+            btnPvP.setBackgroundResource(R.drawable.toggle_item_active)
+            btnPvP.setTextColor(ContextCompat.getColor(this, R.color.black))
+            btnPvC.setBackgroundResource(R.drawable.toggle_item_inactive)
+            btnPvC.setTextColor(ContextCompat.getColor(this, R.color.toggle_inactive_text))
+        } else {
+            btnPvC.setBackgroundResource(R.drawable.toggle_item_active)
+            btnPvC.setTextColor(ContextCompat.getColor(this, R.color.black))
+            btnPvP.setBackgroundResource(R.drawable.toggle_item_inactive)
+            btnPvP.setTextColor(ContextCompat.getColor(this, R.color.toggle_inactive_text))
         }
-
-        // Set initial toggle states
-        btnPvP.isSelected = true
-        btnChooseX.isSelected = true
     }
 
-    private fun setActiveToggle(activeBtn: Button, inactiveBtn: Button) {
-        activeBtn.isSelected = true
-        activeBtn.setTextColor(ContextCompat.getColor(this, android.R.color.white))
-
-        inactiveBtn.isSelected = false
-        inactiveBtn.setTextColor(ContextCompat.getColor(this, R.color.blue_primary))
-    }
-
-    override fun onClick(v: View?) {
-        // Find which button was clicked
-        var row = -1
-        var col = -1
-
-        for (i in 0..2) {
-            for (j in 0..2) {
-                if (v?.id == buttons[i][j]?.id) {
-                    row = i
-                    col = j
-                }
-            }
+    private fun setSymbolToggle(isX: Boolean) {
+        if (isX) {
+            btnChooseX.setBackgroundResource(R.drawable.toggle_item_active)
+            btnChooseX.setTextColor(ContextCompat.getColor(this, R.color.black))
+            btnChooseO.setBackgroundResource(R.drawable.toggle_item_inactive)
+            btnChooseO.setTextColor(ContextCompat.getColor(this, R.color.toggle_inactive_text))
+        } else {
+            btnChooseO.setBackgroundResource(R.drawable.toggle_item_active)
+            btnChooseO.setTextColor(ContextCompat.getColor(this, R.color.black))
+            btnChooseX.setBackgroundResource(R.drawable.toggle_item_inactive)
+            btnChooseX.setTextColor(ContextCompat.getColor(this, R.color.toggle_inactive_text))
         }
-
-        if (row == -1 || col == -1) return
-
-        // Make the move
-        handleMove(row, col)
     }
 
-    private fun handleMove(row: Int, col: Int) {
+    private fun onCellClicked(row: Int, col: Int) {
+        if (!gameLogic.isGameActive()) {
+            return
+        }
+        handleMove(row, col, isComputerMove = false)
+    }
+
+    private fun handleMove(row: Int, col: Int, isComputerMove: Boolean) {
         val currentPlayer = if (gameLogic.isXTurn()) "X" else "O"
 
-        // Check if it's player's turn in PvC mode
-        if (vsComputer && currentPlayer != playerSymbol) {
-            return // Computer's turn, ignore human clicks
+        if (vsComputer && !isComputerMove && currentPlayer != playerSymbol) {
+            return
         }
 
         if (gameLogic.makeMove(row, col)) {
-            // Update button text with animation
-            buttons[row][col]?.apply {
+            // Update cell with animation and color
+            cells[row][col]?.apply {
                 text = currentPlayer
+                setTextColor(ContextCompat.getColor(
+                    this@MainActivity,
+                    if (currentPlayer == "X") R.color.player_x else R.color.player_o
+                ))
                 val popAnimation = AnimationUtils.loadAnimation(this@MainActivity, R.anim.cell_pop)
                 startAnimation(popAnimation)
             }
 
-            // Check for winner
+            // Check result
             val result = gameLogic.checkWinner()
 
             when (result) {
@@ -197,31 +190,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     updateScores()
                     highlightWinningCells()
                     textStatus.text = "X wins!"
-                    showResultDialog("X wins! 🎉")
+                    textStatus.setTextColor(ContextCompat.getColor(this, R.color.black))
                 }
                 "O" -> {
                     gameLogic.addPointO()
                     updateScores()
                     highlightWinningCells()
                     textStatus.text = "O wins!"
-                    showResultDialog("O wins! 🎉")
+                    textStatus.setTextColor(ContextCompat.getColor(this, R.color.black))
                 }
                 "Draw" -> {
                     textStatus.text = "It's a draw!"
-                    showResultDialog("It's a draw! 🤝")
+                    textStatus.setTextColor(ContextCompat.getColor(this, R.color.black))
                 }
                 else -> {
-                    // Game continues - switch turn
                     gameLogic.switchTurn()
                     updateTurnDisplay()
 
-                    // If playing against computer, let it make a move
                     if (vsComputer && gameLogic.isGameActive()) {
                         val nextPlayer = if (gameLogic.isXTurn()) "X" else "O"
                         if (nextPlayer == computerSymbol) {
                             handler.postDelayed({
                                 computerMove()
-                            }, 500) // 500ms delay for computer move
+                            }, 500)
                         }
                     }
                 }
@@ -230,24 +221,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun computerMove() {
+        if (!gameLogic.isGameActive()) return
+
         val move = computerAI?.findBestMove(gameLogic)
         if (move != null) {
-            handleMove(move.first, move.second)
+            handleMove(move.first, move.second, isComputerMove = true)
         }
     }
 
     private fun updateTurnDisplay() {
         val currentPlayer = if (gameLogic.isXTurn()) "X" else "O"
-        textStatus.text = "Player $currentPlayer's turn"
+        textStatus.text = "$currentPlayer's turn"
+        textStatus.setTextColor(ContextCompat.getColor(this, R.color.black))
     }
 
     private fun updateScores() {
-        textScoreX.text = "X Wins: ${gameLogic.getScoreX()}"
-        textScoreO.text = "O Wins: ${gameLogic.getScoreO()}"
+        textScoreX.text = "${gameLogic.getScoreX()}"
+        textScoreO.text = "${gameLogic.getScoreO()}"
     }
 
     private fun resetScores() {
-        gameLogic = GameLogic() // This resets scores
+        gameLogic = GameLogic()
         updateScores()
     }
 
@@ -255,30 +249,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val winningCells = gameLogic.getWinningCells()
         if (winningCells != null) {
             for (cell in winningCells) {
-                buttons[cell.first][cell.second]?.apply {
-                    setBackgroundResource(R.drawable.cell_background_win)
-                }
+                cells[cell.first][cell.second]?.setBackgroundResource(R.drawable.cell_background_win)
             }
         }
-    }
-
-    private fun showResultDialog(message: String) {
-        AlertDialog.Builder(this)
-            .setTitle("Game Over")
-            .setMessage(message)
-            .setPositiveButton("Play Again") { _, _ ->
-                resetBoard()
-            }
-            .setNegativeButton("Close", null)
-            .setCancelable(false)
-            .show()
     }
 
     private fun resetBoard() {
         gameLogic.initializeBoard()
         for (i in 0..2) {
             for (j in 0..2) {
-                buttons[i][j]?.apply {
+                cells[i][j]?.apply {
                     text = ""
                     setBackgroundResource(R.drawable.cell_background)
                 }
@@ -286,7 +266,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         updateTurnDisplay()
 
-        // If computer should start (player chose O in PvC mode)
         if (vsComputer && playerSymbol == "O") {
             handler.postDelayed({
                 computerMove()
