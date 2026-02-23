@@ -3,28 +3,45 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- App Colors -->
-    <color name="background">#F5F5F5</color>
+    <!-- Light Theme Colors -->
+    <color name="light_background">#F5F5F5</color>
+    <color name="light_surface">#FFFFFF</color>
+    <color name="light_cell">#E0E0E0</color>
+    <color name="light_cell_pressed">#BDBDBD</color>
+    <color name="light_text">#000000</color>
+    <color name="light_text_secondary">#757575</color>
+
+    <!-- Dark Theme Colors -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_cell">#2D2D2D</color>
+    <color name="dark_cell_pressed">#3D3D3D</color>
+    <color name="dark_text">#FFFFFF</color>
+    <color name="dark_text_secondary">#B0B0B0</color>
+
+    <!-- Accent Colors -->
     <color name="primary">#FFC107</color>
     <color name="primary_dark">#FFA000</color>
+    <color name="primary_light">#FFD54F</color>
     <color name="secondary">#FFD54F</color>
+    <color name="background">#F5F5F5</color>
 
-    <!-- Game Colors -->
+    <!-- Cell Colors -->
     <color name="cell_background">#E0E0E0</color>
     <color name="cell_pressed">#BDBDBD</color>
-    <color name="cell_win">#81C784</color>
-    <color name="player_x">#000000</color>
-    <color name="player_o">#000000</color>
+    <color name="cell_win">#4CAF50</color>
+
+    <!-- Scoreboard Colors -->
+    <color name="score_x_bg">#FFEBEE</color>
+    <color name="score_o_bg">#E3F2FD</color>
+    <color name="score_x_bg_dark">#3E2723</color>
+    <color name="score_o_bg_dark">#1A237E</color>
+    <color name="score_x_text">#E53935</color>
+    <color name="score_o_text">#1E88E5</color>
 
     <!-- Toggle Colors -->
     <color name="toggle_active">#FFC107</color>
     <color name="toggle_inactive_bg">#E0E0E0</color>
+    <color name="toggle_inactive_bg_dark">#2D2D2D</color>
     <color name="toggle_inactive_text">#757575</color>
-
-    <!-- Button Colors -->
-    <color name="button_primary">#FFC107</color>
-    <color name="button_text">#000000</color>
-
-    <!-- Header -->
-    <color name="header_text">#000000</color>
 </resources>

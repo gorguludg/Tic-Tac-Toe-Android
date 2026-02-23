@@ -1,11 +1,14 @@
 package com.gorguludg.tictactoe
 
+import android.animation.ValueAnimator
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,6 +20,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var textStatus: TextView
     private lateinit var textScoreX: TextView
     private lateinit var textScoreO: TextView
+    private lateinit var textVs: TextView
+
+    // Layouts for theme changes
+    private lateinit var mainLayout: LinearLayout
+    private lateinit var headerLayout: RelativeLayout
+    private lateinit var modeToggleContainer: LinearLayout
+    private lateinit var scoreCardX: LinearLayout
+    private lateinit var scoreCardO: LinearLayout
 
     // Mode toggle
     private lateinit var btnPvP: TextView
@@ -27,6 +38,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnChooseX: TextView
     private lateinit var btnChooseO: TextView
 
+    // Theme toggle
+    private lateinit var themeToggle: LinearLayout
+    private lateinit var themeIcon: TextView
+
     private lateinit var gameLogic: GameLogic
     private var computerAI: ComputerAI? = null
 
@@ -34,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private var vsComputer = false
     private var playerSymbol = "X"
     private var computerSymbol = "O"
+    private var isDarkTheme = false
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -41,16 +57,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Load saved theme preference
+        val prefs = getSharedPreferences("TicTacToePrefs", Context.MODE_PRIVATE)
+        isDarkTheme = prefs.getBoolean("isDarkTheme", false)
+
         gameLogic = GameLogic()
         initializeUI()
+        applyTheme()
         updateTurnDisplay()
     }
 
     private fun initializeUI() {
+        // Layouts
+        mainLayout = findViewById(R.id.mainLayout)
+        headerLayout = findViewById(R.id.headerLayout)
+        modeToggleContainer = findViewById(R.id.modeToggleContainer)
+        scoreCardX = findViewById(R.id.scoreCardX)
+        scoreCardO = findViewById(R.id.scoreCardO)
+
         // Text views
         textStatus = findViewById(R.id.textStatus)
         textScoreX = findViewById(R.id.textScoreX)
         textScoreO = findViewById(R.id.textScoreO)
+        textVs = findViewById(R.id.textVs)
         btnRestart = findViewById(R.id.btnRestart)
 
         // Mode toggle
@@ -61,6 +90,10 @@ class MainActivity : AppCompatActivity() {
         symbolToggle = findViewById(R.id.symbolToggle)
         btnChooseX = findViewById(R.id.btnChooseX)
         btnChooseO = findViewById(R.id.btnChooseO)
+
+        // Theme toggle
+        themeToggle = findViewById(R.id.themeToggle)
+        themeIcon = findViewById(R.id.themeIcon)
 
         // Game cells
         cells[0][0] = findViewById(R.id.btn00)
@@ -121,10 +154,135 @@ class MainActivity : AppCompatActivity() {
             restartGame()
         }
 
+        // Theme toggle listener
+        themeToggle.setOnClickListener {
+            toggleTheme()
+        }
+
         // Restart button
         btnRestart.setOnClickListener {
             restartGame()
         }
+    }
+
+    private fun toggleTheme() {
+        isDarkTheme = !isDarkTheme
+
+        // Save preference
+        val prefs = getSharedPreferences("TicTacToePrefs", Context.MODE_PRIVATE)
+        prefs.edit().putBoolean("isDarkTheme", isDarkTheme).apply()
+
+        // Animate theme icon
+        animateThemeToggle()
+
+        // Apply theme
+        applyTheme()
+    }
+
+    private fun animateThemeToggle() {
+        val animator = ValueAnimator.ofFloat(0f, 1f)
+        animator.duration = 300
+        animator.addUpdateListener { animation ->
+            val progress = animation.animatedValue as Float
+            val translationX = if (isDarkTheme) {
+                progress * (themeToggle.width - themeIcon.width - 8)
+            } else {
+                (1 - progress) * (themeToggle.width - themeIcon.width - 8)
+            }
+            themeIcon.translationX = translationX
+        }
+        animator.start()
+
+        // Update icon with slight delay for smooth transition
+        handler.postDelayed({
+            themeIcon.text = if (isDarkTheme) "🌙" else "☀️"
+        }, 150)
+    }
+
+    private fun applyTheme() {
+        if (isDarkTheme) {
+            applyDarkTheme()
+        } else {
+            applyLightTheme()
+        }
+
+        // Reapply toggle states
+        setModeToggle(!vsComputer)
+        if (vsComputer) {
+            setSymbolToggle(playerSymbol == "X")
+        }
+    }
+
+    private fun applyLightTheme() {
+        // Background
+        mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.light_background))
+
+        // Header stays yellow
+        headerLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.primary))
+
+        // Mode toggle
+        modeToggleContainer.setBackgroundResource(R.drawable.toggle_background)
+        symbolToggle.setBackgroundResource(R.drawable.toggle_background)
+
+        // Scoreboard
+        scoreCardX.setBackgroundResource(R.drawable.score_card_x)
+        scoreCardO.setBackgroundResource(R.drawable.score_card_o)
+        textVs.setTextColor(ContextCompat.getColor(this, R.color.light_text_secondary))
+
+        // Status text
+        textStatus.setTextColor(ContextCompat.getColor(this, R.color.light_text))
+
+        // Cells
+        for (i in 0..2) {
+            for (j in 0..2) {
+                cells[i][j]?.apply {
+                    if (text.isEmpty()) {
+                        setBackgroundResource(R.drawable.cell_background)
+                    }
+                    setTextColor(ContextCompat.getColor(this@MainActivity, R.color.light_text))
+                }
+            }
+        }
+
+        // Theme icon position
+        themeIcon.text = "☀️"
+        themeIcon.translationX = 0f
+    }
+
+    private fun applyDarkTheme() {
+        // Background
+        mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_background))
+
+        // Header stays yellow
+        headerLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.primary))
+
+        // Mode toggle
+        modeToggleContainer.setBackgroundResource(R.drawable.toggle_background_dark)
+        symbolToggle.setBackgroundResource(R.drawable.toggle_background_dark)
+
+        // Scoreboard
+        scoreCardX.setBackgroundResource(R.drawable.score_card_x_dark)
+        scoreCardO.setBackgroundResource(R.drawable.score_card_o_dark)
+        textVs.setTextColor(ContextCompat.getColor(this, R.color.dark_text_secondary))
+
+        // Status text
+        textStatus.setTextColor(ContextCompat.getColor(this, R.color.dark_text))
+
+        // Cells
+        for (i in 0..2) {
+            for (j in 0..2) {
+                cells[i][j]?.apply {
+                    if (text.isEmpty()) {
+                        setBackgroundResource(R.drawable.cell_background_dark)
+                    }
+                    setTextColor(ContextCompat.getColor(this@MainActivity, R.color.dark_text))
+                }
+            }
+        }
+
+        // Theme icon position
+        themeIcon.text = "🌙"
+        themeIcon.translationX = (themeToggle.width - themeIcon.width - 8).toFloat()
     }
 
     private fun setModeToggle(isPvP: Boolean) {
@@ -170,12 +328,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (gameLogic.makeMove(row, col)) {
-            // Update cell with animation and color
+            // Update cell with animation
             cells[row][col]?.apply {
                 text = currentPlayer
                 setTextColor(ContextCompat.getColor(
                     this@MainActivity,
-                    if (currentPlayer == "X") R.color.player_x else R.color.player_o
+                    if (isDarkTheme) R.color.dark_text else R.color.light_text
                 ))
                 val popAnimation = AnimationUtils.loadAnimation(this@MainActivity, R.anim.cell_pop)
                 startAnimation(popAnimation)
@@ -190,18 +348,15 @@ class MainActivity : AppCompatActivity() {
                     updateScores()
                     highlightWinningCells()
                     textStatus.text = "X wins!"
-                    textStatus.setTextColor(ContextCompat.getColor(this, R.color.black))
                 }
                 "O" -> {
                     gameLogic.addPointO()
                     updateScores()
                     highlightWinningCells()
                     textStatus.text = "O wins!"
-                    textStatus.setTextColor(ContextCompat.getColor(this, R.color.black))
                 }
                 "Draw" -> {
                     textStatus.text = "It's a draw!"
-                    textStatus.setTextColor(ContextCompat.getColor(this, R.color.black))
                 }
                 else -> {
                     gameLogic.switchTurn()
@@ -232,7 +387,6 @@ class MainActivity : AppCompatActivity() {
     private fun updateTurnDisplay() {
         val currentPlayer = if (gameLogic.isXTurn()) "X" else "O"
         textStatus.text = "$currentPlayer's turn"
-        textStatus.setTextColor(ContextCompat.getColor(this, R.color.black))
     }
 
     private fun updateScores() {
@@ -260,7 +414,10 @@ class MainActivity : AppCompatActivity() {
             for (j in 0..2) {
                 cells[i][j]?.apply {
                     text = ""
-                    setBackgroundResource(R.drawable.cell_background)
+                    setBackgroundResource(
+                        if (isDarkTheme) R.drawable.cell_background_dark
+                        else R.drawable.cell_background
+                    )
                 }
             }
         }
