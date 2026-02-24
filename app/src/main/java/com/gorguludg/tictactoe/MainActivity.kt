@@ -7,8 +7,8 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     // Layouts for theme changes
     private lateinit var mainLayout: LinearLayout
-    private lateinit var headerLayout: RelativeLayout
+    private lateinit var headerLayout: LinearLayout
     private lateinit var modeToggleContainer: LinearLayout
     private lateinit var scoreCardX: LinearLayout
     private lateinit var scoreCardO: LinearLayout

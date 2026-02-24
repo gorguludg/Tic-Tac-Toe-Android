@@ -8,47 +8,62 @@
     android:background="@color/light_background">
 
     <!-- App Header -->
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="@color/primary"
-        android:padding="16dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Tic Tac Toe"
-            android:textSize="22sp"
-            android:textColor="@color/black"
-            android:textStyle="bold"/>
+        <!-- Spacer for status bar -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="32dp"/>
 
-        <!-- Theme Toggle -->
-        <LinearLayout
-            android:id="@+id/themeToggle"
-            android:layout_width="56dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/theme_toggle_track"
-            android:gravity="center_vertical"
-            android:paddingStart="2dp"
-            android:paddingEnd="2dp"
-            android:clickable="true"
-            android:focusable="true">
+        <!-- Title and Toggle Row -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/themeIcon"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:background="@drawable/theme_toggle_thumb"
-                android:gravity="center"
-                android:text="☀️"
-                android:textSize="14sp"/>
-        </LinearLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Tic Tac Toe"
+                android:textSize="22sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
 
-    </RelativeLayout>
+            <!-- Theme Toggle -->
+            <LinearLayout
+                android:id="@+id/themeToggle"
+                android:layout_width="56dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/theme_toggle_track"
+                android:gravity="center_vertical"
+                android:paddingStart="2dp"
+                android:paddingEnd="2dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:id="@+id/themeIcon"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:background="@drawable/theme_toggle_thumb"
+                    android:gravity="center"
+                    android:text="☀️"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <!-- Main Content -->
     <LinearLayout
