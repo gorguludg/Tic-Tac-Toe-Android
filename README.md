@@ -72,22 +72,6 @@ Or visit the [Releases page](https://github.com/gorguludg/Tic-Tac-Toe-Android/re
 - **Min SDK:** API 24 (Android 7.0)
 - **UI:** Material Design Components
 
-## 📂 Project Structure
-app/src/main/
-├── kotlin/com/gorguludg/tictactoe/
-│ ├── MainActivity.kt # UI Controller & Theme Logic
-│ ├── GameLogic.kt # Game Rules & State
-│ └── ComputerAI.kt # AI Opponent Logic
-├── res/
-│ ├── layout/
-│ │ └── activity_main.xml
-│ ├── drawable/ # Buttons, cells, cards
-│ ├── anim/ # Cell pop animation
-│ └── values/
-│ ├── colors.xml # Light & dark colors
-│ └── themes.xml
-└── AndroidManifest.xml
-
 🤖 AI Strategy
 The computer opponent uses this decision priority:
 
