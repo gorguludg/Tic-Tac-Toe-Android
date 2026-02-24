@@ -232,14 +232,20 @@ class MainActivity : AppCompatActivity() {
         // Status text
         textStatus.setTextColor(ContextCompat.getColor(this, R.color.light_text))
 
-        // Cells
+        // Cells - check if it's a winning cell or regular cell
+        val winningCells = gameLogic.getWinningCells()
         for (i in 0..2) {
             for (j in 0..2) {
                 cells[i][j]?.apply {
-                    if (text.isEmpty()) {
+                    setTextColor(ContextCompat.getColor(this@MainActivity, R.color.light_text))
+
+                    // Check if this is a winning cell
+                    val isWinningCell = winningCells?.any { it.first == i && it.second == j } == true
+                    if (isWinningCell) {
+                        setBackgroundResource(R.drawable.cell_background_win)
+                    } else {
                         setBackgroundResource(R.drawable.cell_background)
                     }
-                    setTextColor(ContextCompat.getColor(this@MainActivity, R.color.light_text))
                 }
             }
         }
@@ -268,14 +274,20 @@ class MainActivity : AppCompatActivity() {
         // Status text
         textStatus.setTextColor(ContextCompat.getColor(this, R.color.dark_text))
 
-        // Cells
+        // Cells - check if it's a winning cell or regular cell
+        val winningCells = gameLogic.getWinningCells()
         for (i in 0..2) {
             for (j in 0..2) {
                 cells[i][j]?.apply {
-                    if (text.isEmpty()) {
+                    setTextColor(ContextCompat.getColor(this@MainActivity, R.color.dark_text))
+
+                    // Check if this is a winning cell
+                    val isWinningCell = winningCells?.any { it.first == i && it.second == j } == true
+                    if (isWinningCell) {
+                        setBackgroundResource(R.drawable.cell_background_win)
+                    } else {
                         setBackgroundResource(R.drawable.cell_background_dark)
                     }
-                    setTextColor(ContextCompat.getColor(this@MainActivity, R.color.dark_text))
                 }
             }
         }
