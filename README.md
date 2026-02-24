@@ -52,9 +52,9 @@ A modern Tic Tac Toe game for Android with clean UI, smart AI opponent, and dark
 
 ## 📥 Download
 
-**[Download Latest APK](https://github.com/gorguludg/Tic-Tac-Toe-Android/releases/latest)**
+**[Download Latest APK](https://github.com/gorguludg/tic-tac-toe-android/releases/latest)**
 
-Or visit the [Releases page](https://github.com/gorguludg/Tic-Tac-Toe-Android/releases) for all versions.
+Or visit the [Releases page](https://github.com/gorguludg/tic-tac-toe-android/releases) for all versions.
 
 ### Installation Instructions
 
@@ -85,4 +85,4 @@ Random - Take any remaining cell
 gorguludg
 
 GitHub: @gorguludg
-- Web Version: [Tic Tac Toe Web](https://github.com/gorguludg/tic-tac-toe)
+- Web Version: [Tic Tac Toe Web](https://github.com/gorguludg/tic-tac-toe-web)
