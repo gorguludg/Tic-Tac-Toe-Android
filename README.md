@@ -85,4 +85,4 @@ Random - Take any remaining cell
 gorguludg
 
 GitHub: @gorguludg
-Web Version: Tic Tac Toe Web
+- Web Version: [Tic Tac Toe Web](https://github.com/gorguludg/tic-tac-toe)
